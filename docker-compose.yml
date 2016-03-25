@@ -1,0 +1,40 @@
+master:
+  build:
+    galeramaster
+  hostname:
+    master
+#  volumes:
+#    - "./mariadb/data:/var/lib/mysql"
+  ports:
+    - 127.0.0.1:3306:3306
+    - 127.0.0.1:4567:4567/udp
+    - 127.0.0.1:4567-4568:4567-4568
+    - 127.0.0.1:4444:4444
+
+node1:
+  build:
+    galeranode
+  hostname:
+    node1
+  links:
+    - master
+
+node2:
+  build:
+    galeranode
+  hostname:
+    node2
+  links:
+    - master
+
+phpmyadmin:
+   image: phpmyadmin/phpmyadmin
+   ports :
+    - "8080:80"
+   environment:
+    PMA_HOSTS: master,node1,node2
+   links:
+    - master:master
+    - node1:node1
+    - node2:node2
+
